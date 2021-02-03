@@ -14,26 +14,39 @@ class PictureController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
      */
     public function index()
     {
         //
+
+        return Picture::with('user')->get();
+    }
+
+    public function get(Request $request)
+    {
+        //
+
+        return Picture::where('id', $request->id)->with('user')->get();
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Picture|\Illuminate\Http\Response
      */
     public function create(Request $request)
     {
+        $picture = new Picture();
+        $picture->user_id = \auth()->id();
+        $picture->description = $request->get('description');
+        $picture->title = $request->get('title');
 
-        $deliveryman = User::find(Auth::id());
-        $picture_url = PictureUploadHelper::uploadPictureToDisk('pictures', $request->get('picture'));
-        $updated_field = [$request->get('picture', $picture_url);
-        $deliveryman->update($updated_field);
-        return ['field' => $request->get('field') . '_picture_url', 'url' => $picture_url];
+        $picture_url = PictureUploadHelper::uploadPictureToDisk('public', 'pictures', $request->get('picture',));
+        $picture->url = $picture_url;
+        $picture->save();
+        return $picture;
     }
 
     /**

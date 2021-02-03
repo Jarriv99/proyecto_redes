@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PictureController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +23,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::group(['middleware' => 'auth:api'], static function () {
     Route::group(['prefix' => 'picture'], static function () {
-        Route::get('/', );
+        Route::post('/post', [PictureController::class,'create'] );
+        Route::get('/all', [PictureController::class,'index']);
+        Route::get('/get', [PictureController::class,'get']);
 
     });
 });
